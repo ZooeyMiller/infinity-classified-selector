@@ -1,81 +1,62 @@
-import { LitElement, html, css } from 'lit';
-import { property, customElement } from 'lit/decorators.js';
+import { LitElement, html, css } from "lit";
+import { property, state, customElement } from "lit/decorators.js";
 
-const logo = new URL('../../assets/open-wc-logo.svg', import.meta.url).href;
+const logo = new URL("../../assets/open-wc-logo.svg", import.meta.url).href;
 
-@customElement('infinity-classified-selector')
+enum Section {
+  SelectDeck,
+  SelectAmount,
+  SelectClassifieds,
+  ViewClassifieds
+}
+
+enum Deck {
+  Green,
+  Red,
+  Both
+}
+
+enum Card {
+  TODO
+}
+
+@customElement("infinity-classified-selector")
 export class InfinityClassifiedSelector extends LitElement {
-  @property({ type: String }) header = 'My app';
+  @state() section: Section = Section.SelectDeck;
+  @state() deck: Deck | null = null;
+  @state() selected: Array<Card> = [];
+  @state() rejected: Array<Card> = [];
+  @state() completed: Array<Card> = [];
+  @state() amount: number = 0
 
-  static styles = css`
-    :host {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      font-size: calc(10px + 2vmin);
-      color: #1a2b42;
-      max-width: 960px;
-      margin: 0 auto;
-      text-align: center;
-      background-color: var(--infinity-classified-selector-background-color);
+  renderSection = () => {
+    switch (this.section) {
+      case SelectDeck:
+        return this.renderSelectDeck();
+      case SelectAmount:
+        return this.renderSelectAmount();
+      case SelectClassifieds:
+        return this.renderSelectClassifieds();
+      case ViewClassifieds:
+        this.renderViewClassifieds();
+      default:
+        this.renderError();
     }
+  };
 
-    main {
-      flex-grow: 1;
-    }
-
-    .logo {
-      margin-top: 36px;
-      animation: app-logo-spin infinite 20s linear;
-    }
-
-    @keyframes app-logo-spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .app-footer {
-      font-size: calc(12px + 0.5vmin);
-      align-items: center;
-    }
-
-    .app-footer a {
-      margin-left: 5px;
-    }
-  `;
+  static styles = css``;
 
   render() {
     return html`
       <main>
-        <div class="logo"><img alt="open-wc logo" src=${logo} /></div>
-        <h1>${this.header}</h1>
+        <div class="header">
+          <span>Infinity Classified Selector</span>
+        </div>
 
-        <p>Edit <code>src/InfinityClassifiedSelector.ts</code> and save to reload.</p>
-        <a
-          class="app-link"
-          href="https://open-wc.org/guides/developing-components/code-examples"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Code examples
-        </a>
+        <div class="body">
+          ${this.renderSection()}
+        </div>
       </main>
-
-      <p class="app-footer">
-        🚽 Made with love by
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/open-wc"
-          >open-wc</a
-        >.
-      </p>
     `;
   }
 }
