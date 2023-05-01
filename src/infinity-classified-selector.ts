@@ -327,6 +327,14 @@ export class InfinityClassifiedSelector extends LitElement {
     h1 {
       font-size: 24px;
     }
+
+    .body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 400px;
+      margin: 0 auto;
+    }
   `;
 
   render() {
