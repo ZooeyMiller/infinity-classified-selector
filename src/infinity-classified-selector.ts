@@ -38,6 +38,17 @@ export class InfinityClassifiedSelector extends LitElement {
   @state() completed: Array<Card> = [];
   @state() amount: number = 0;
 
+  firstUpdated = () => {
+    this.selected = JSON.parse(window.localStorage.getItem("selected") || 'null') || [];
+    this.rejected = JSON.parse(window.localStorage.getItem("rejected") || 'null') || [];
+    this.drawPile = JSON.parse(window.localStorage.getItem("drawPile") || 'null') || [];
+    this.completed = JSON.parse(window.localStorage.getItem("completed") || 'null') || [];
+    this.deck = JSON.parse(window.localStorage.getItem("deck") || 'null');
+    this.amount = JSON.parse(window.localStorage.getItem("amount") || 'null') || 0;
+
+    this.setSection()
+  };
+
   getTitleText = () => {
     switch (this.section) {
       case Section.SelectDeck:
@@ -166,10 +177,6 @@ export class InfinityClassifiedSelector extends LitElement {
     }
   };
 
-  firstUpdated = (): void => {
-    // TODO: localStorage check + load
-  };
-
   handleSelectDeck = (deck: Deck) => (): void => {
     this.deck = deck;
 
@@ -189,11 +196,13 @@ export class InfinityClassifiedSelector extends LitElement {
     }
 
     this.setSection();
+    this.setStorage();
   };
 
   handleSelectAmount = (amount: number) => (): void => {
     this.amount = amount;
     this.setSection();
+    this.setStorage();
   };
 
   handleSelectClassifieds = (
@@ -208,12 +217,21 @@ export class InfinityClassifiedSelector extends LitElement {
 
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
-    // TODO: localStorage set
+    this.setStorage();
+  };
+
+  setStorage = () => {
+    window.localStorage.setItem("selected", JSON.stringify(this.selected));
+    window.localStorage.setItem("rejected", JSON.stringify(this.rejected));
+    window.localStorage.setItem("drawPile", JSON.stringify(this.drawPile));
+    window.localStorage.setItem("completed", JSON.stringify(this.completed));
+    window.localStorage.setItem("deck", JSON.stringify(this.deck));
+    window.localStorage.setItem("amount", JSON.stringify(this.amount));
   };
 
   handleMarkAsComplete = (card: Card) => (): void => {
     this.completed = [...this.completed, card];
-    // TODO: localStorage set
+    this.setStorage();
   };
 
   handleMarkAsIncomplete = (card: Card) => (): void => {
@@ -223,7 +241,7 @@ export class InfinityClassifiedSelector extends LitElement {
       ...this.completed.slice(0, idx),
       ...this.completed.slice(idx + 1)
     ];
-    // TODO: localStorage set
+    this.setStorage();
   };
 
   handleReset = (): void => {
@@ -233,7 +251,7 @@ export class InfinityClassifiedSelector extends LitElement {
     this.rejected = [];
     this.completed = [];
     this.amount = 0;
-    // TODO: localStorage reset
+    this.setStorage();
   };
 
   static styles = css`
